@@ -1,0 +1,170 @@
+[
+  {
+    "slug": "terris-pokemon-break-in",
+    "title": "The Pokémon shop break-in",
+    "province": "Manitoba",
+    "location": "Winnipeg, MB",
+    "category": "Theft",
+    "summary": "Thousands of Pokémon cards vanished from Terri’s Trinkets and Toys. Start with the reported break-in, then follow the public record.",
+    "status": "reported",
+    "detail": {
+      "demo": false,
+      "number": "01",
+      "art": "map",
+      "status_as_of": "2026-09-11",
+      "checked_at": "2026-09-29",
+      "note": "Police confirmed a break-in report in the September 11 coverage. No later outcome was found in the sources reviewed; current police investigation status is unconfirmed.",
+      "sources": [
+        {
+          "url": "https://www.winnipegfreepress.com/breakingnews/2026/09/11/pokemon-thieves-clear-out-collectibles-shop",
+          "label": "Winnipeg Free Press · September 11, 2026"
+        },
+        {
+          "url": "https://thecanadiangothic.com/episodes",
+          "label": "Keep Canada Weird · episode 231, September 18"
+        }
+      ],
+      "claims": [
+        {
+          "text": "The owner estimated about 7,000 cards and roughly $6,000 in merchandise were taken.",
+          "status": "Reported by owner"
+        },
+        {
+          "text": "The Free Press reported police confirmation of a commercial break-in involving more than $5,000 in stolen property.",
+          "status": "Police report confirmed"
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-09-08",
+          "text": "Break-in reported at the collectibles shop."
+        },
+        {
+          "date": "2026-09-11",
+          "text": "The Free Press published the owner’s account and police confirmation."
+        },
+        {
+          "date": "2026-09-18",
+          "text": "Keep Canada Weird covered the Winnipeg Pokémon break-in."
+        }
+      ],
+      "tip": {
+        "phone": "204-986-6222",
+        "url": "https://www.winnipeg.ca/police/contact",
+        "label": "Winnipeg Police"
+      }
+    }
+  },
+  {
+    "slug": "mulvey-market-card-theft",
+    "title": "The $70,000 card theft",
+    "province": "Manitoba",
+    "location": "Winnipeg, MB",
+    "category": "Theft",
+    "summary": "After a trading night at Mulvey Market, a seller reported a major Pokémon card theft. What can the public reporting establish?",
+    "status": "reported",
+    "detail": {
+      "demo": false,
+      "number": "02",
+      "art": "map",
+      "status_as_of": "2026-09-21",
+      "checked_at": "2026-09-29",
+      "note": "The owner said a police report was filed. CityNews had not received a police response at publication. Current police investigation status is unconfirmed. No connection to the other Winnipeg theft has been established here.",
+      "sources": [
+        {
+          "url": "https://winnipeg.citynews.ca/2026/09/21/pokemon-cards-stolen-mulvey-market/",
+          "label": "CityNews Winnipeg · September 21, 2026"
+        },
+        {
+          "url": "https://thecanadiangothic.com/episodes",
+          "label": "Keep Canada Weird · episode 232, September 25"
+        }
+      ],
+      "claims": [
+        {
+          "text": "The seller estimated the missing cards and products at about $70,000.",
+          "status": "Owner’s estimate"
+        },
+        {
+          "text": "The owner believed someone remained inside after closing. This is an account to verify, not a police finding.",
+          "status": "Unconfirmed account"
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-09-18",
+          "text": "The reported theft followed a Friday trading event."
+        },
+        {
+          "date": "2026-09-21",
+          "text": "CityNews published the seller’s account."
+        },
+        {
+          "date": "2026-09-25",
+          "text": "Keep Canada Weird discussed the Mulvey Market theft."
+        }
+      ],
+      "tip": {
+        "phone": "204-986-6222",
+        "url": "https://www.winnipeg.ca/police/contact",
+        "label": "Winnipeg Police"
+      }
+    }
+  },
+  {
+    "slug": "vancouver-restaurant-witness-appeal",
+    "title": "A night out. A witness appeal.",
+    "province": "British Columbia",
+    "location": "Vancouver, BC",
+    "category": "Witness appeal",
+    "summary": "Vancouver Police asked witnesses to come forward after reported threats and property damage at a downtown fast-food restaurant.",
+    "status": "witness-appeal",
+    "detail": {
+      "demo": false,
+      "number": "03",
+      "art": "forest",
+      "status_as_of": "2026-09-03",
+      "checked_at": "2026-09-29",
+      "note": "VPD described an ongoing investigation on September 3. No later outcome was found in the reviewed sources. The appeal is dated; it does not establish the investigation’s status today.",
+      "sources": [
+        {
+          "url": "https://vpd.ca/news/2026/09/03/vancouver-police-investigating-disturbing-incident-at-downtown-fast-food-restaurant/",
+          "label": "Vancouver Police · September 3, 2026"
+        },
+        {
+          "url": "https://dailyhive.com/vancouver/vancouver-fast-food-incident-burger-crush",
+          "label": "Daily Hive · restaurant coverage, September 3"
+        },
+        {
+          "url": "https://thecanadiangothic.com/episodes",
+          "label": "Keep Canada Weird · episode 231, September 18"
+        }
+      ],
+      "claims": [
+        {
+          "text": "VPD said two men allegedly threatened staff and customers, claimed to have guns, and damaged property.",
+          "status": "Police statement"
+        },
+        {
+          "text": "Police were reviewing CCTV and asked anyone with information to contact investigators.",
+          "status": "Witnesses requested"
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-09-03",
+          "text": "VPD published a witness appeal and said its investigation was ongoing."
+        },
+        {
+          "date": "2026-09-18",
+          "text": "Keep Canada Weird discussed the restaurant incident."
+        }
+      ],
+      "tip": {
+        "phone": "604-717-3321",
+        "url": "https://vpd.ca/news/2026/09/03/vancouver-police-investigating-disturbing-incident-at-downtown-fast-food-restaurant/",
+        "label": "Vancouver Police witness line"
+      }
+    }
+  }
+]

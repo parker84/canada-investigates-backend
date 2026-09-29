@@ -1,17 +1,22 @@
 import os
 import tempfile
 os.environ["DATABASE_URL"] = f"sqlite:///{tempfile.mkdtemp()}/test.db"
-os.environ["SEED_DEMO"] = "true"
+os.environ["SEED_CASES"] = "true"
 from fastapi.testclient import TestClient
 from app.main import app
 
 def test_search_and_filters():
     with TestClient(app) as client:
         assert client.get('/health').json() == {"status": "ok"}
-        assert len(client.get('/api/v1/cases').json()['items']) == 4
-        assert len(client.get('/api/v1/cases?q=museum&province=Ontario').json()['items']) == 1
+        assert len(client.get('/api/v1/cases').json()['items']) == 3
+        assert len(client.get('/api/v1/cases?q=Mulvey&province=Manitoba').json()['items']) == 1
         assert client.get('/api/v1/cases?q=%25').json()['items'] == []
-        assert client.get('/api/v1/cases?status=resolved').json()['items'][0]['slug'] == 'tracks-beyond-the-town'
+        assert client.get('/api/v1/cases?status=resolved').json()['items'] == []
+        assert len(client.get('/api/v1/cases?status=active').json()['items']) == 3
+        assert len(client.get('/api/v1/cases?status=witness-appeal').json()['items']) == 1
+        for case in client.get('/api/v1/cases').json()['items']:
+            assert case['demo'] is False
+            assert case['sources'] and case['status_as_of'] and case['tip']['url'].startswith('https://')
         assert client.get('/api/v1/cases/missing').status_code == 404
 
 def test_submissions_are_private(monkeypatch):
@@ -25,3 +30,21 @@ def test_submissions_are_private(monkeypatch):
         assert client.get(f'/api/v1/cases/submission-{identifier}').status_code == 404
         assert client.get('/api/v1/cases?q=archival').json()['items'] == []
         assert client.post('/api/v1/cases', json=payload | {"source_url": "javascript:alert(1)"}).status_code == 422
+
+
+def test_seed_retires_only_fictional_rows_and_preserves_edits():
+    import json
+    from sqlalchemy import select
+    from app.main import Session, Case, seed
+    with TestClient(app) as client:
+        with Session() as db:
+            db.add(Case(id="old-demo", slug="the-missing-museum-map", title="Old demo", province="Ontario", location="Ottawa", category="History", summary="Fictional", status="reported", created_at="2026-01-01", detail=json.dumps({"demo": True})))
+            current = db.scalar(select(Case).where(Case.slug == "terris-pokemon-break-in"))
+            current.title = "Editorial correction"
+            db.commit()
+        seed()
+        seed()
+        assert client.get('/api/v1/cases/the-missing-museum-map').status_code == 404
+        assert client.get('/api/v1/cases?status=archived').json()['items'] == []
+        assert len(client.get('/api/v1/cases').json()['items']) == 3
+        assert client.get('/api/v1/cases/terris-pokemon-break-in').json()['title'] == "Editorial correction"

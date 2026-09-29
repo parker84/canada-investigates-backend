@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 import json
 import os
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,26 +42,27 @@ class Submission(BaseModel):
     summary: str = Field(min_length=40, max_length=5000, pattern=r"\S")
     source_url: HttpUrl
 
-DEMO = [
-    ("the-missing-museum-map", "The missing museum map", "Ontario", "Ottawa, ON", "History", "An old exhibition catalogue mentions a map that never appears in the digitized collection. Can the paper trail fill in the gap?", "open", "01", "map"),
-    ("a-signal-from-the-coast", "A signal from the coast", "Nova Scotia", "Lunenburg, NS", "Maritime", "A community archive contains two different dates for the same lighthouse signal. An exercise in following the original record.", "investigating", "02", "coast"),
-    ("the-last-picture-house", "The last picture house", "Manitoba", "Winnipeg, MB", "Local history", "Three photographs. Two street names. One neighbourhood cinema. Help piece together the story behind a changing city block.", "open", "03", "city"),
-    ("tracks-beyond-the-town", "Tracks beyond the town", "British Columbia", "Revelstoke, BC", "Environment", "An abandoned route appears in an old survey but disappears from a later edition. Explore how to compare maps and document uncertainty.", "resolved", "04", "forest"),
-]
+PUBLIC_STATUSES = ("reported", "witness-appeal", "investigating", "resolved")
+LEGACY_DEMOS = ("the-missing-museum-map", "a-signal-from-the-coast", "the-last-picture-house", "tracks-beyond-the-town")
 
 def seed():
+    records = json.loads(Path(__file__).with_name("seed_cases.json").read_text())
     with Session() as db:
-        for slug, title, province, location, category, summary, status, number, art in DEMO:
-            if db.scalar(select(Case).where(Case.slug == slug)):
-                continue
-            detail = {"demo": True, "number": number, "art": art, "sources": [], "claims": [{"text": "The records described in this sample require comparison with original documents.", "status": "Unverified"}], "timeline": [{"date": "2026-09-29", "text": "Illustrative case created to demonstrate the investigation workspace."}], "note": "This is a fictional demonstration case. No real incident or public allegation is represented."}
-            db.add(Case(id=str(uuid4()), slug=slug, title=title, province=province, location=location, category=category, summary=summary, status=status, created_at=datetime.now(timezone.utc).isoformat(), detail=json.dumps(detail)))
+        for old in db.scalars(select(Case).where(Case.slug.in_(LEGACY_DEMOS))):
+            if json.loads(old.detail).get("demo") is True:
+                old.status = "archived"
+        for record in records:
+            values = record | {"detail": json.dumps(record["detail"], ensure_ascii=False)}
+            existing = db.scalar(select(Case).where(Case.slug == record["slug"]))
+            # Existing editorial changes survive restarts; seeded files are inserted once.
+            if not existing:
+                db.add(Case(id=str(uuid4()), created_at=datetime.now(timezone.utc).isoformat(), **values))
         db.commit()
 
 @asynccontextmanager
 async def lifespan(app):
     Base.metadata.create_all(engine)
-    if os.getenv("SEED_DEMO", "false").lower() == "true":
+    if os.getenv("SEED_CASES", os.getenv("SEED_DEMO", "false")).lower() == "true":
         seed()
     yield
 
@@ -77,10 +79,12 @@ def health():
 @app.get("/api/v1/cases")
 def cases(q: str = Query("", max_length=200), status: str = "", province: str = "", limit: int = Query(50, ge=1, le=100)):
     with Session() as db:
-        stmt = select(Case).where(Case.status != "under-review")
+        stmt = select(Case).where(Case.status.in_(PUBLIC_STATUSES))
         if q.strip():
             stmt = stmt.where(Case.title.icontains(q.strip(), autoescape=True) | Case.summary.icontains(q.strip(), autoescape=True))
-        if status:
+        if status == "active":
+            stmt = stmt.where(Case.status != "resolved")
+        elif status:
             stmt = stmt.where(Case.status == status)
         if province:
             stmt = stmt.where(Case.province == province)
@@ -89,7 +93,7 @@ def cases(q: str = Query("", max_length=200), status: str = "", province: str = 
 @app.get("/api/v1/cases/{slug}")
 def case_detail(slug: str):
     with Session() as db:
-        case = db.scalar(select(Case).where(Case.slug == slug, Case.status != "under-review"))
+        case = db.scalar(select(Case).where(Case.slug == slug, Case.status.in_(PUBLIC_STATUSES)))
         if not case:
             raise HTTPException(404, "Case not found")
         return serialize(case)
